@@ -1088,7 +1088,12 @@ async function getTeachersFromFirebase() {
                     return teachers;
                 }
             } catch (error) {
-                console.log('⚠️ Firebase error, trying localStorage fallback:', error.message);
+                console.log('⚠️ Firebase permission error (GitHub Pages deployment), using localStorage fallback:', error.message);
+                // Mark Firebase as unavailable for this session
+                if (error.message.includes('permission_denied')) {
+                    window.firebasePermissionDenied = true;
+                    console.log('🔒 Firebase permissions denied - running in offline mode');
+                }
             }
         }
         
@@ -1302,22 +1307,44 @@ window.cleanupAllFirebaseData = cleanupAllFirebaseData;
 window.deleteUnwantedFirebaseData = deleteUnwantedFirebaseData;
 window.testAddTeacherForm = testAddTeacherForm;
 window.testAddStudentForm = testAddStudentForm;
+window.createSampleDataForGitHubPages = createSampleDataForGitHubPages;
 
-// Get students from Firebase
+// Get students from Firebase with localStorage fallback
 async function getStudentsFromFirebase() {
     try {
         console.log('🔥 Loading students from Firebase...');
         
-        if (window.firebaseDB && window.firebaseDB.isConnected) {
-            const students = await window.firebaseDB.getStudents();
-            console.log(`✅ Loaded ${students.length} students from Firebase`);
-            return students;
-        } else {
-            console.warn('⚠️ Firebase not connected, returning empty array');
-            return [];
+        // Try Firebase first (unless we know permissions are denied)
+        if (window.firebaseDB && window.firebaseDB.isConnected && !window.firebasePermissionDenied) {
+            try {
+                const students = await window.firebaseDB.getStudents();
+                if (students && students.length > 0) {
+                    console.log(`✅ Loaded ${students.length} students from Firebase`);
+                    // Save to localStorage as backup
+                    localStorage.setItem('students', JSON.stringify(students));
+                    return students;
+                }
+            } catch (error) {
+                console.log('⚠️ Firebase permission error (GitHub Pages deployment), using localStorage fallback:', error.message);
+                if (error.message.includes('permission_denied')) {
+                    window.firebasePermissionDenied = true;
+                    console.log('🔒 Firebase permissions denied - running in offline mode');
+                }
+            }
         }
+        
+        // Fallback to localStorage
+        const localStudents = getStorageData('students');
+        if (localStudents) {
+            const students = JSON.parse(localStudents);
+            console.log(`✅ Loaded ${students.length} students from storage`);
+            return students;
+        }
+        
+        console.warn('⚠️ No students found in Firebase or localStorage');
+        return [];
     } catch (error) {
-        console.error('❌ Error loading students from Firebase:', error);
+        console.error('❌ Error loading students:', error);
         return [];
     }
 }
@@ -7409,12 +7436,26 @@ async function generateSettingsContent() {
                                 <p>Real-time database connection status</p>
                             </div>
                             <div class="setting-control">
-                                <span class="status-badge success">
-                                    <i class="fas fa-check-circle"></i>
-                                    Connected
+                                <span class="status-badge ${window.firebasePermissionDenied ? 'warning' : 'success'}" id="firebaseStatus">
+                                    <i class="fas fa-${window.firebasePermissionDenied ? 'exclamation-triangle' : 'check-circle'}"></i>
+                                    ${window.firebasePermissionDenied ? 'Offline Mode' : 'Connected'}
                                 </span>
                             </div>
                         </div>
+                        ${window.firebasePermissionDenied ? `
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <label>Deployment Mode</label>
+                                <p>Running on GitHub Pages with localStorage fallback</p>
+                            </div>
+                            <div class="setting-control">
+                                <span class="status-badge info">
+                                    <i class="fas fa-info-circle"></i>
+                                    GitHub Pages
+                                </span>
+                            </div>
+                        </div>
+                        ` : ''}
                     </div>
                 </div>
 
@@ -7444,6 +7485,18 @@ async function generateSettingsContent() {
                                     Clear
                                 </button>
                             </div>
+                            ${window.firebasePermissionDenied ? `
+                            <div class="action-item">
+                                <div class="action-info">
+                                    <h4>Create Sample Data</h4>
+                                    <p>Add sample teachers and departments for testing</p>
+                                </div>
+                                <button class="btn btn-info" onclick="createSampleDataForGitHubPages()">
+                                    <i class="fas fa-plus"></i>
+                                    Create
+                                </button>
+                            </div>
+                            ` : ''}
                         </div>
                     </div>
                 </div>
@@ -9242,21 +9295,32 @@ async function refreshDepartmentsDisplay() {
     }
 }
 
-// Get departments from Firebase
+// Get departments from Firebase with localStorage fallback
 async function getDepartmentsFromFirebase() {
     try {
-        if (window.firebaseDB && window.firebaseDB.isConnected) {
-            const deptRef = window.firebaseDB.db.ref('departmentData');
-            const snapshot = await deptRef.once('value');
-            const deptData = snapshot.val();
-            
-            if (deptData) {
-                const departments = Object.keys(deptData).map(key => ({
-                    id: key,
-                    ...deptData[key]
-                }));
-                console.log(`✅ Loaded ${departments.length} departments from Firebase`);
-                return departments;
+        // Try Firebase first (unless we know permissions are denied)
+        if (window.firebaseDB && window.firebaseDB.isConnected && !window.firebasePermissionDenied) {
+            try {
+                const deptRef = window.firebaseDB.db.ref('departmentData');
+                const snapshot = await deptRef.once('value');
+                const deptData = snapshot.val();
+                
+                if (deptData) {
+                    const departments = Object.keys(deptData).map(key => ({
+                        id: key,
+                        ...deptData[key]
+                    }));
+                    console.log(`✅ Loaded ${departments.length} departments from Firebase`);
+                    // Save to localStorage as backup
+                    localStorage.setItem('departments', JSON.stringify(departments));
+                    return departments;
+                }
+            } catch (error) {
+                console.log('⚠️ Firebase permission error (GitHub Pages deployment), using localStorage fallback:', error.message);
+                if (error.message.includes('permission_denied')) {
+                    window.firebasePermissionDenied = true;
+                    console.log('🔒 Firebase permissions denied - running in offline mode');
+                }
             }
         }
         
@@ -10175,16 +10239,82 @@ function clearCache() {
     }, 1000);
 }
 
+// Create sample data for GitHub Pages deployment
+function createSampleDataForGitHubPages() {
+    console.log('🎯 Creating sample data for GitHub Pages deployment...');
+    
+    // Create sample teachers
+    const sampleTeachers = [
+        {
+            id: 'ME001',
+            name: 'Prof. Rajesh Kumar',
+            email: 'rajesh.kumar@bvit.edu',
+            username: 'rajesh.kumar@bvit.edu',
+            password: 'teacher123',
+            phone: '9876543210',
+            department: 'Mechanical Engineering',
+            role: 'Subject Teacher',
+            class: 'ME2K',
+            subjects: ['Thermodynamics', 'Mechanics'],
+            assignedSubjects: ['Thermodynamics', 'Mechanics'],
+            isActive: true,
+            createdAt: new Date().toISOString()
+        },
+        {
+            id: 'CM001',
+            name: 'Prof. Priya Sharma',
+            email: 'priya.sharma@bvit.edu',
+            username: 'priya.sharma@bvit.edu',
+            password: 'teacher123',
+            phone: '9876543211',
+            department: 'Computer Technology',
+            role: 'Class Teacher',
+            class: 'CM1I',
+            subjects: ['Programming', 'Database', 'Networks'],
+            assignedSubjects: ['Programming', 'Database'],
+            isActive: true,
+            createdAt: new Date().toISOString()
+        }
+    ];
+    
+    // Create sample departments
+    const sampleDepartments = [
+        {
+            code: 'ME',
+            name: 'Mechanical Engineering',
+            division: null,
+            status: 'active',
+            createdAt: Date.now()
+        },
+        {
+            code: 'CM',
+            name: 'Computer Technology',
+            division: 'A',
+            status: 'active',
+            createdAt: Date.now()
+        }
+    ];
+    
+    // Save to localStorage
+    localStorage.setItem('teachers', JSON.stringify(sampleTeachers));
+    localStorage.setItem('departments', JSON.stringify(sampleDepartments));
+    localStorage.setItem('students', JSON.stringify([])); // Empty students array
+    
+    console.log('✅ Sample data created for GitHub Pages');
+    showNotification('Sample data created successfully!', 'success');
+    
+    // Refresh the page to load new data
+    setTimeout(() => {
+        location.reload();
+    }, 1500);
+}
+
 function exportAllData() {
     showNotification('Exporting all data...', 'info');
 }
 
 function importData() {
     showNotification('Import data - Implementation needed', 'info');
-}
-
-function clearCache() {
-    showNotification('Cache cleared successfully!', 'success');
 }
 
 function resetSystem() {
