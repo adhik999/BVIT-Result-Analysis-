@@ -1090,22 +1090,28 @@ async function getTeachersFromFirebase() {
             } catch (error) {
                 console.log('⚠️ Firebase permission error (GitHub Pages deployment), using localStorage fallback:', error.message);
                 // Mark Firebase as unavailable for this session
-                if (error.message.includes('permission_denied')) {
+                if (error.message.includes('permission_denied') || error.message.includes('PERMISSION_DENIED')) {
                     window.firebasePermissionDenied = true;
                     console.log('🔒 Firebase permissions denied - running in offline mode');
+                    // Show user-friendly notification with Firebase rules guide
+                    if (!window.offlineModeNotified) {
+                        setTimeout(() => {
+                            showNotification('🔒 Firebase permission denied - Please update Firebase Rules', 'warning', 8000);
+                            console.log('📋 Firebase Rules Setup Guide:');
+                            console.log('1. Go to Firebase Console → Database → Rules');
+                            console.log('2. Replace rules with: { "rules": { ".read": true, ".write": true } }');
+                            console.log('3. Click "Publish" to apply changes');
+                            console.log('4. Refresh this page to load Firebase data');
+                        }, 2000);
+                        window.offlineModeNotified = true;
+                    }
                 }
             }
         }
         
-        // Fallback to safe storage
-        const localTeachers = getStorageData('teachers');
-        if (localTeachers) {
-            const teachers = JSON.parse(localTeachers);
-            console.log(`✅ Loaded ${teachers.length} teachers from storage`);
-            return teachers;
-        }
-        
-        console.warn('⚠️ No teachers found in Firebase or localStorage');
+        // Firebase-only mode - no localStorage fallback
+        console.warn('⚠️ No teachers found in Firebase - check Firebase security rules');
+        console.log('🔧 Firebase Rules needed: { "rules": { ".read": true, ".write": true } }');
         return [];
         
     } catch (error) {
@@ -1308,6 +1314,7 @@ window.deleteUnwantedFirebaseData = deleteUnwantedFirebaseData;
 window.testAddTeacherForm = testAddTeacherForm;
 window.testAddStudentForm = testAddStudentForm;
 window.createSampleDataForGitHubPages = createSampleDataForGitHubPages;
+window.setupFirebaseDataForGitHubPages = setupFirebaseDataForGitHubPages;
 
 // Get students from Firebase with localStorage fallback
 async function getStudentsFromFirebase() {
@@ -1333,15 +1340,9 @@ async function getStudentsFromFirebase() {
             }
         }
         
-        // Fallback to localStorage
-        const localStudents = getStorageData('students');
-        if (localStudents) {
-            const students = JSON.parse(localStudents);
-            console.log(`✅ Loaded ${students.length} students from storage`);
-            return students;
-        }
-        
-        console.warn('⚠️ No students found in Firebase or localStorage');
+        // Firebase-only mode - no localStorage fallback
+        console.warn('⚠️ No students found in Firebase - check Firebase security rules');
+        console.log('🔧 Firebase Rules needed: { "rules": { ".read": true, ".write": true } }');
         return [];
     } catch (error) {
         console.error('❌ Error loading students:', error);
@@ -7496,7 +7497,18 @@ async function generateSettingsContent() {
                                     Create
                                 </button>
                             </div>
-                            ` : ''}
+                            ` : `
+                            <div class="action-item">
+                                <div class="action-info">
+                                    <h4>Setup Firebase Data</h4>
+                                    <p>Initialize Firebase with sample data</p>
+                                </div>
+                                <button class="btn btn-success" onclick="setupFirebaseDataForGitHubPages()">
+                                    <i class="fas fa-fire"></i>
+                                    Setup
+                                </button>
+                            </div>
+                            `}
                         </div>
                     </div>
                 </div>
@@ -9324,10 +9336,10 @@ async function getDepartmentsFromFirebase() {
             }
         }
         
-        // Fallback to localStorage
-        const departments = JSON.parse(localStorage.getItem('departments') || '[]');
-        console.log(`📦 Loaded ${departments.length} departments from localStorage`);
-        return departments;
+        // Firebase-only mode - no localStorage fallback
+        console.warn('⚠️ No departments found in Firebase - check Firebase security rules');
+        console.log('🔧 Firebase Rules needed: { "rules": { ".read": true, ".write": true } }');
+        return [];
         
     } catch (error) {
         console.error('❌ Error loading departments:', error);
@@ -10307,6 +10319,104 @@ function createSampleDataForGitHubPages() {
     setTimeout(() => {
         location.reload();
     }, 1500);
+}
+
+// Auto-setup Firebase data for GitHub Pages
+async function setupFirebaseDataForGitHubPages() {
+    if (!window.firebaseDB || !window.firebaseDB.isConnected) {
+        console.log('⚠️ Firebase not connected, skipping auto-setup');
+        return;
+    }
+    
+    try {
+        console.log('🔥 Setting up Firebase data for GitHub Pages...');
+        
+        // Setup admin user
+        const adminData = {
+            username: 'admin@bvit.edu',
+            email: 'admin@bvit.edu',
+            name: 'System Administrator',
+            password: 'admin123',
+            role: 'admin',
+            department: 'Administration',
+            createdAt: Date.now()
+        };
+        
+        const adminsRef = window.firebaseDB.db.ref('admins/admin_user');
+        await adminsRef.set(adminData);
+        console.log('✅ Admin user setup in Firebase');
+        
+        // Setup sample teachers
+        const teachersRef = window.firebaseDB.db.ref('teachers');
+        const sampleTeachers = {
+            'ME001': {
+                id: 'ME001',
+                name: 'Prof. Rajesh Kumar',
+                email: 'rajesh.kumar@bvit.edu',
+                username: 'rajesh.kumar@bvit.edu',
+                password: 'teacher123',
+                phone: '9876543210',
+                department: 'Mechanical Engineering',
+                role: 'Subject Teacher',
+                class: 'ME2K',
+                subjects: ['Thermodynamics', 'Mechanics'],
+                assignedSubjects: ['Thermodynamics', 'Mechanics'],
+                isActive: true,
+                createdAt: new Date().toISOString()
+            },
+            'CM001': {
+                id: 'CM001',
+                name: 'Prof. Priya Sharma',
+                email: 'priya.sharma@bvit.edu',
+                username: 'priya.sharma@bvit.edu',
+                password: 'teacher123',
+                phone: '9876543211',
+                department: 'Computer Technology',
+                role: 'Class Teacher',
+                class: 'CM1I',
+                subjects: ['Programming', 'Database', 'Networks'],
+                assignedSubjects: ['Programming', 'Database'],
+                isActive: true,
+                createdAt: new Date().toISOString()
+            }
+        };
+        
+        await teachersRef.set(sampleTeachers);
+        console.log('✅ Sample teachers setup in Firebase');
+        
+        // Setup sample departments
+        const deptRef = window.firebaseDB.db.ref('departmentData');
+        const sampleDepartments = {
+            'ME': {
+                code: 'ME',
+                name: 'Mechanical Engineering',
+                division: null,
+                status: 'active',
+                createdAt: Date.now()
+            },
+            'CM_A': {
+                code: 'CM',
+                name: 'Computer Technology',
+                division: 'A',
+                status: 'active',
+                createdAt: Date.now()
+            }
+        };
+        
+        await deptRef.set(sampleDepartments);
+        console.log('✅ Sample departments setup in Firebase');
+        
+        showNotification('🔥 Firebase data setup completed!', 'success');
+        
+        // Refresh page to load new data
+        setTimeout(() => {
+            location.reload();
+        }, 2000);
+        
+    } catch (error) {
+        console.error('❌ Error setting up Firebase data:', error);
+        showNotification('❌ Firebase setup failed - check permissions', 'error');
+    }
 }
 
 function exportAllData() {
