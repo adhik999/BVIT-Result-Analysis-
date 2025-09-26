@@ -896,9 +896,38 @@ body::before {
         font-size: 14px;
     }
     
-    /* Dashboard Mobile */
+    /* Dashboard Mobile - Fixed backgrounds */
     .dashboard {
         flex-direction: column;
+        background: transparent !important;
+    }
+    
+    .main-content {
+        background: transparent !important;
+        padding: 15px;
+        margin-left: 0;
+        width: 100%;
+    }
+    
+    .content-area {
+        background: rgba(255, 255, 255, 0.98) !important;
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        color: #333 !important;
+    }
+    
+    .tab-content {
+        background: transparent !important;
+        color: #333 !important;
+    }
+    
+    .tab-pane {
+        background: transparent !important;
+        color: #333 !important;
     }
     
     .sidebar {
@@ -10061,23 +10090,65 @@ input:checked + .slider:before {
         max-width: 100%;
     }
     
-    /* Mobile header improvements */
+    /* Mobile header improvements - Fixed logout button */
     .header, .dashboard-header {
-        padding: 10px 15px;
+        padding: 15px;
         text-align: center;
+        background: rgba(255, 255, 255, 0.98) !important;
+        backdrop-filter: blur(20px);
+        border-radius: 15px;
+        margin-bottom: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        position: relative;
     }
     
     .dashboard-title {
         font-size: 1.5rem;
         margin-bottom: 5px;
+        color: #333 !important;
     }
     
     .dashboard-subtitle {
         font-size: 0.9rem;
         opacity: 0.8;
+        color: #666 !important;
     }
     
-    /* Mobile navigation improvements */
+    /* Mobile logout button fix */
+    .logout-btn, .btn-logout {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        padding: 8px 15px !important;
+        font-size: 12px !important;
+        min-height: 35px !important;
+        background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 8px !important;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        box-shadow: 0 4px 12px rgba(245, 101, 101, 0.3) !important;
+        z-index: 100;
+        cursor: pointer;
+    }
+    
+    .logout-btn:hover, .btn-logout:hover {
+        transform: translateY(-1px) !important;
+        box-shadow: 0 6px 15px rgba(245, 101, 101, 0.4) !important;
+    }
+    
+    .logout-btn i, .btn-logout i {
+        font-size: 12px !important;
+    }
+    
+    /* Mobile navigation improvements - Fixed black overlay */
     .nav-tabs {
         display: flex;
         flex-wrap: nowrap;
@@ -10086,9 +10157,11 @@ input:checked + .slider:before {
         -ms-overflow-style: none;
         padding: 10px 15px;
         gap: 8px;
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.95) !important;
         border-radius: 15px;
         margin-bottom: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
     }
     
     .nav-tabs::-webkit-scrollbar {
@@ -10103,29 +10176,36 @@ input:checked + .slider:before {
         font-size: 13px;
         font-weight: 500;
         border-radius: 10px;
-        background: rgba(255, 255, 255, 0.2);
-        color: #333;
+        background: rgba(255, 255, 255, 0.9) !important;
+        color: #333 !important;
         border: none;
         transition: all 0.3s ease;
         white-space: nowrap;
     }
     
     .nav-tabs .nav-link.active {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
         box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         transform: translateY(-1px);
     }
     
-    /* Mobile card improvements */
+    .nav-tabs .nav-link:hover:not(.active) {
+        background: rgba(255, 255, 255, 0.95) !important;
+        color: #333 !important;
+        transform: translateY(-1px);
+    }
+    
+    /* Mobile card improvements - Fixed backgrounds */
     .card, .stat-card {
         margin-bottom: 15px;
         border-radius: 15px;
         padding: 15px;
-        background: rgba(255, 255, 255, 0.95);
+        background: rgba(255, 255, 255, 0.98) !important;
         backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        color: #333 !important;
     }
     
     /* Mobile statistics grid */
@@ -10169,57 +10249,95 @@ input:checked + .slider:before {
         letter-spacing: 0.5px;
     }
     
-    /* Mobile table improvements */
+    /* Mobile table improvements - Horizontal Layout */
     .table-responsive {
         border-radius: 15px;
-        overflow: hidden;
+        overflow-x: auto;
+        overflow-y: visible;
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         margin-bottom: 20px;
-        overflow-x: auto;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
     }
     
     .table {
-        font-size: 13px;
+        font-size: 12px;
         margin-bottom: 0;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(20px);
+        background: transparent;
+        min-width: 100%;
+        width: auto;
+        white-space: nowrap;
     }
     
     .table thead th {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         font-weight: 600;
-        padding: 12px 8px;
-        font-size: 12px;
+        padding: 12px 10px;
+        font-size: 11px;
         border: none;
         text-align: center;
         white-space: nowrap;
+        position: sticky;
+        top: 0;
+        z-index: 10;
     }
     
     .table tbody td {
         padding: 10px 8px;
         border-bottom: 1px solid rgba(102, 126, 234, 0.1);
-        font-size: 12px;
+        font-size: 11px;
         vertical-align: middle;
+        white-space: nowrap;
+        background: rgba(255, 255, 255, 0.9);
     }
     
-    .table tbody tr:hover {
-        background: rgba(102, 126, 234, 0.05);
-        transform: translateX(2px);
+    .table tbody tr {
+        background: rgba(255, 255, 255, 0.9);
         transition: all 0.2s ease;
     }
     
-    /* Mobile form improvements */
+    .table tbody tr:hover {
+        background: rgba(102, 126, 234, 0.1);
+        transform: none;
+    }
+    
+    /* Horizontal scroll indicator */
+    .table-responsive::after {
+        content: '← Scroll horizontally to see more →';
+        display: block;
+        text-align: center;
+        padding: 10px;
+        font-size: 11px;
+        color: #667eea;
+        background: rgba(102, 126, 234, 0.1);
+        border-top: 1px solid rgba(102, 126, 234, 0.2);
+        font-weight: 500;
+    }
+    
+    /* Mobile form improvements - Fixed backgrounds */
     .form-group {
         margin-bottom: 15px;
+        background: transparent !important;
     }
     
     .form-label {
         font-weight: 600;
-        color: #333;
+        color: #333 !important;
         margin-bottom: 6px;
         display: block;
         font-size: 13px;
+    }
+    
+    .form-container {
+        background: rgba(255, 255, 255, 0.98) !important;
+        backdrop-filter: blur(20px);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
     }
     
     .form-control, .form-select {
@@ -10241,15 +10359,15 @@ input:checked + .slider:before {
         outline: none;
     }
     
-    /* Mobile button improvements */
+    /* Mobile button improvements - Fixed visibility */
     .btn {
         padding: 12px 20px;
         font-size: 14px;
         font-weight: 600;
         border-radius: 10px;
         border: none;
-        min-height: 44px; /* Touch target size */
-        display: inline-flex;
+        min-height: 44px;
+        display: inline-flex !important;
         align-items: center;
         justify-content: center;
         gap: 6px;
@@ -10258,6 +10376,9 @@ input:checked + .slider:before {
         text-decoration: none;
         position: relative;
         overflow: hidden;
+        z-index: 10;
+        opacity: 1 !important;
+        visibility: visible !important;
     }
     
     .btn-primary {
@@ -10301,14 +10422,14 @@ input:checked + .slider:before {
         transform: translateY(0);
     }
     
-    /* Mobile modal improvements */
+    /* Mobile modal improvements - Fixed overlay */
     .modal-container {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.5);
+        background: rgba(0, 0, 0, 0.3) !important;
         backdrop-filter: blur(5px);
         display: flex;
         align-items: center;
@@ -10456,10 +10577,11 @@ input:checked + .slider:before {
         animation: spin 1s ease-in-out infinite;
     }
     
-    /* Mobile search improvements */
+    /* Mobile search improvements - Fixed backgrounds */
     .search-container {
         position: relative;
         margin-bottom: 15px;
+        background: transparent !important;
     }
     
     .search-input {
@@ -10468,9 +10590,20 @@ input:checked + .slider:before {
         border: 2px solid rgba(102, 126, 234, 0.2);
         border-radius: 20px;
         font-size: 16px;
-        background: rgba(255, 255, 255, 0.9);
+        background: rgba(255, 255, 255, 0.95) !important;
         backdrop-filter: blur(10px);
         transition: all 0.3s ease;
+        color: #333 !important;
+    }
+    
+    .search-filter-container {
+        background: rgba(255, 255, 255, 0.95) !important;
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 15px;
+        margin-bottom: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
     }
     
     .search-input:focus {
@@ -10489,12 +10622,13 @@ input:checked + .slider:before {
         pointer-events: none;
     }
     
-    /* Mobile filter improvements */
+    /* Mobile filter improvements - Fixed backgrounds */
     .filter-container {
         display: flex;
         gap: 8px;
         flex-wrap: wrap;
         margin-bottom: 15px;
+        background: transparent !important;
     }
     
     .filter-select {
@@ -10504,8 +10638,32 @@ input:checked + .slider:before {
         border: 2px solid rgba(102, 126, 234, 0.2);
         border-radius: 10px;
         font-size: 14px;
-        background: rgba(255, 255, 255, 0.9);
+        background: rgba(255, 255, 255, 0.95) !important;
         backdrop-filter: blur(10px);
+        color: #333 !important;
+    }
+    
+    /* Fix all text colors in mobile */
+    .mobile-device * {
+        color: inherit !important;
+    }
+    
+    .mobile-device h1, .mobile-device h2, .mobile-device h3, 
+    .mobile-device h4, .mobile-device h5, .mobile-device h6 {
+        color: #333 !important;
+    }
+    
+    .mobile-device p, .mobile-device span, .mobile-device div {
+        color: #333 !important;
+    }
+    
+    .mobile-device .text-white {
+        color: white !important;
+    }
+    
+    /* Remove all black overlays */
+    .mobile-device .overlay, .mobile-device .backdrop {
+        background: transparent !important;
     }
     
     /* Mobile badge improvements */
