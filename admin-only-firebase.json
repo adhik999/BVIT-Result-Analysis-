@@ -1,0 +1,24 @@
+{
+  "users": {
+    "hChkzDIoBogYzyVy5BI5rD7Oxkj1": {
+      "email": "admin@bvit.edu",
+      "password": "admin123",
+      "name": "Admin",
+      "role": "admin",
+      "department": "Administration",
+      "createdAt": 1726825467000
+    }
+  },
+  "teachers": [],
+  "students": [],
+  "departmentData": {},
+  "classSubjects": {},
+  "marks": {},
+  "proformaA": {},
+  "proformaB": {},
+  "settings": {
+    "institution": "BVIT College",
+    "academicYear": "2024-25",
+    "lastUpdated": 1726825467000
+  }
+}

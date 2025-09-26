@@ -1,0 +1,48 @@
+# Firebase Configuration (Keep this private!)
+firebase-config.js
+admin-only-firebase.json
+
+# Environment Variables
+.env
+.env.local
+.env.production
+
+# Node modules (if using npm)
+node_modules/
+package-lock.json
+
+# IDE Files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Build files (if any)
+dist/
+build/
+
+# Local storage backup files
+localStorage-backup.json
+firebase-backup.json
+
+# Test data files
+test-data.json
+sample-data.json
+
+# Personal notes
+notes.txt
+todo.txt
+PERSONAL_NOTES.md

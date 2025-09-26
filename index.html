@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BVIT Result Analysis System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="mobile-enhancements.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="page active">
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <div class="logo">
+                        <img src="bharati-logo.png" alt="BVIT Logo" class="login-logo">
+                    </div>
+                    <h1>BVIT</h1>
+                    <h2>NAVI MUMBAI</h2>
+                    <p>RESULT ANALYSIS SYSTEM</p>
+                </div>
+                
+                <div class="login-tabs">
+                    <button class="tab-btn active" onclick="switchTab('admin')">
+                        <i class="fas fa-user-shield"></i>
+                        Admin Login
+                    </button>
+                    <button class="tab-btn" onclick="switchTab('teacher')">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        Teacher Login
+                    </button>
+                </div>
+
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="username" placeholder="Teacher ID (e.g., T001) or Admin Username" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" placeholder="Password" required>
+                        <button type="button" class="toggle-password" onclick="togglePassword()">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    
+                    <input type="hidden" id="userType" value="admin">
+                    
+                    <button type="submit" class="login-btn">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Login
+                    </button>
+                </form>
+                
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminPage" class="page">
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" style="display: none;">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="dashboard">
+            <nav class="sidebar">
+                <div class="sidebar-header">
+                    <div class="logo">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Admin Panel</h3>
+                </div>
+                
+                <ul class="nav-menu">
+                    <li><a href="#" class="nav-link active" data-section="overview">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Overview</span>
+                    </a></li>
+                    <li><a href="#" class="nav-link" data-section="teacher-management">
+                        <i class="fas fa-users"></i>
+                        <span>Teacher Management</span>
+                    </a></li>
+                    <li><a href="#" class="nav-link" data-section="student-management">
+                        <i class="fas fa-user-graduate"></i>
+                        <span>Student Management</span>
+                    </a></li>
+                    <li><a href="#" class="nav-link" data-section="departments">
+                        <i class="fas fa-building"></i>
+                        <span>Department Management</span>
+                    </a></li>
+                    <li><a href="#" class="nav-link" data-section="results">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Results Analysis</span>
+                    </a></li>
+                    <li><a href="#" class="nav-link" data-section="marks-progress">
+                        <i class="fas fa-tasks"></i>
+                        <span>Marks Entry Progress</span>
+                    </a></li>
+                    <li><a href="#" class="nav-link" data-section="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a></li>
+                </ul>
+                
+                <div class="sidebar-footer">
+                    <button class="logout-btn" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </button>
+                </div>
+            </nav>
+            
+            <!-- Mobile Header -->
+            <header class="mobile-header" style="display: none;">
+                <div class="mobile-header-content">
+                    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="mobile-title">Admin Dashboard</div>
+                    <div class="mobile-user">
+                        <div class="mobile-user-avatar">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <main class="main-content">
+                <header class="content-header">
+                    <div class="header-left">
+                        <h1 id="pageTitle">Dashboard Overview</h1>
+                        <p id="pageSubtitle">Welcome to the Admin Dashboard</p>
+                    </div>
+                    <div class="header-right">
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                <i class="fas fa-user-shield"></i>
+                            </div>
+                            <div class="user-details">
+                                <span class="user-name">Admin User</span>
+                                <span class="user-role">System Administrator</span>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                
+                <div id="adminContent" class="content-area">
+                    <!-- Content will be loaded here -->
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Teacher Dashboard -->
+    <div id="teacherPage" class="page">
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" style="display: none;">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="dashboard">
+            <nav class="sidebar">
+                <div class="sidebar-header">
+                    <div class="logo">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Teacher Panel</h3>
+                </div>
+                
+                <ul class="nav-menu">
+                    <li><a href="#" class="nav-link active" data-section="overview">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Overview</span>
+                    </a></li>
+                    <li><a href="#" class="nav-link" data-section="marks-entry">
+                        <i class="fas fa-edit"></i>
+                        <span>Marks Entry</span>
+                    </a></li>
+                    <li><a href="#" class="nav-link" data-section="marks-reports">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Marks Reports</span>
+                    </a></li>
+                    <li><a href="#" class="nav-link" data-section="profile">
+                        <i class="fas fa-user"></i>
+                        <span>Profile</span>
+                    </a></li>
+                    <li><a href="#" class="nav-link" data-section="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a></li>
+                </ul>
+                
+                <div class="sidebar-footer">
+                    <button class="logout-btn" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </button>
+                </div>
+            </nav>
+            
+            <!-- Mobile Header -->
+            <header class="mobile-header" style="display: none;">
+                <div class="mobile-header-content">
+                    <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="mobile-title">Teacher Dashboard</div>
+                    <div class="mobile-user">
+                        <div class="mobile-user-avatar">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <main class="main-content">
+                <header class="content-header">
+                    <div class="header-left">
+                        <h1 id="teacherPageTitle">Teacher Dashboard</h1>
+                        <p id="teacherPageSubtitle">Welcome to your dashboard</p>
+                    </div>
+                    <div class="header-right">
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                            </div>
+                            <div class="user-details">
+                                <span class="user-name" id="teacherUserName">Teacher</span>
+                                <span class="user-role" id="teacherUserRole">Faculty</span>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                
+                <div id="teacherContent" class="content-area">
+                    <!-- Content will be loaded here -->
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notificationContainer" class="notification-container"></div>
+
+    <script>
+        // Firebase initialization flags
+        let firebaseInited = false;
+        
+        function firebaseLoaded() {
+            firebaseInited = true;
+            console.log('✅ Firebase SDK loaded successfully');
+            window.firebaseReady = true;
+        }
+        
+        // Call firebaseLoaded when Firebase is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof firebase !== 'undefined') {
+                firebaseLoaded();
+            }
+        });
+    </script>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    
+    <!-- Firebase Configuration -->
+    <script src="firebase-config.js"></script>
+    
+    <!-- Main Application Scripts -->
+    <script src="script.js"></script>
+    
+    <!-- Firebase Authentication Functions -->
+    <script>
+        // Global Firebase authentication functions
+        window.signInWithEmail = signInWithEmail;
+        window.signUpWithEmail = signUpWithEmail;
+        window.signOut = signOut;
+        window.getCurrentUser = getCurrentUser;
+        window.getUserRole = getUserRole;
+        window.isAdmin = isAdmin;
+        window.isTeacher = isTeacher;
+        
+        // Auto-initialize Firebase on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('🔥 Auto-initializing Firebase...');
+            await initializeFirebase();
+            
+            // Make Firebase functions globally available (with delay)
+            setTimeout(() => {
+                if (typeof debugFirebaseState !== 'undefined') {
+                    window.debugFirebaseState = debugFirebaseState;
+                    console.log('✅ debugFirebaseState loaded');
+                }
+                if (typeof debugFirebaseClassSubjects !== 'undefined') {
+                    window.debugFirebaseClassSubjects = debugFirebaseClassSubjects;
+                }
+                if (typeof updateFirebaseHeaders !== 'undefined') {
+                    window.updateFirebaseHeaders = updateFirebaseHeaders;
+                }
+                if (typeof signInWithEmail !== 'undefined') {
+                    window.signInWithEmail = signInWithEmail;
+                }
+                if (typeof signUpWithEmail !== 'undefined') {
+                    window.signUpWithEmail = signUpWithEmail;
+                }
+                if (typeof signOut !== 'undefined') {
+                    window.signOut = signOut;
+                }
+                if (typeof getCurrentUser !== 'undefined') {
+                    window.getCurrentUser = getCurrentUser;
+                }
+                if (typeof getUserRole !== 'undefined') {
+                    window.getUserRole = getUserRole;
+                }
+                if (typeof isAdmin !== 'undefined') {
+                    window.isAdmin = isAdmin;
+                }
+                if (typeof isTeacher !== 'undefined') {
+                    window.isTeacher = isTeacher;
+                }
+                console.log('🔥 All Firebase functions loaded globally');
+            }, 1000);
+            
+            // Auto-migration disabled to prevent unwanted test data
+            // setTimeout(async () => {
+            //     if (window.firebaseDB && window.firebaseDB.isConnected) {
+            //         console.log('🔄 Auto-migrating data to Firebase...');
+            //         await autoMigrateToFirebase();
+            //     }
+            // }, 3000);
+        });
+    </script>
+    
+    <!-- Additional Scripts - Removed missing files -->
+    <!-- loadStudentsByDepartment.js - functionality moved to script.js -->
+    <!-- comprehensive-marks-table.js - functionality moved to script.js -->
+    <!-- department-functions.js - functionality moved to script.js -->
+</body>
+</html>
